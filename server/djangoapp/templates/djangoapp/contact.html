@@ -34,16 +34,37 @@
         .element{
             padding: 10%;
         }
+
+        .c img {
+            max-width: 5%;
+            height: 5%;
+            margin-right: 2%;
+            box-shadow: 2px 2px;
+            border-radius: 10%;
+        }
+
+        .c p {
+            margin-right: 2%;
+        }
+
+        button {
+            margin-top: .5%;
+            height: 60%;
+        }
+        
+        body {
+            background-color: cadetblue;
+        }
         
     </style>
 </head>
 
-<body>
+<body class="bg-secondary">
     <div class="conatiner bg-dark">
         <h1 class="text-white-50 bg-dark p-3">Best Car Dealership</h1>
 
     <!-- Add a nav bar here -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark d-flex justify-content-between">
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -58,9 +79,29 @@
                     <!-- Add more navigation items as needed -->
                 </ul>
             </div>
+            <!-- {% if user.is_authenticated %} -->
+            <div style="padding-right: 2%;" class="c d-flex justify-content-end g-4">
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/avatar-icon.png">
+                <p class="lead text-white-50">{{user.username}}</p>
+                <form method="post" action="{% url 'djangoapp:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-white">Logout</button>
+                </form>
+            </div>
+            <!-- {% else %} -->
+            <div style="padding-right: 2%;">
+                <form method="post" action="{% url 'djangoapp:login' %}">
+                    {% csrf_token %}
+                    <input class="input-group-sm" placeholder="username" type="text" name="username">
+                    <input class="input-group-sm" placeholder="password" type="password" name="password">
+                    <button type="submit" class="btn-outline-secondary">Login</button>
+                </form>
+                <button class="btn-outline-dark">Sign up</button>
+            </div>
+            <!-- {% endif %} -->
         </nav>
     </div>
-    <div class="container">
+    <div class="container bg-white">
         <div class="d-flex  gap-2">
             <div class="element">
                 <h2 class="h-25">Contact person 1</h2>

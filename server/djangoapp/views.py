@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
-
 # Create an `about` view to render a static about page
 def about(request):
     context = {}
@@ -32,11 +31,39 @@ def contact(request):
     
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
-# ...
+def login_request(request):
+
+    error_message = None
+
+    context = {}
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+    
+        user = authenticate(request, username=username, password=password)
+        print("Trying login...")
+        if user:
+            print("Found user, logging in")
+            login(request, user)
+            return redirect('..')
+        else:
+            print("User not found")
+            error_message = "Invalid username or password. Please try again."
+            return redirect('..')
+    
+    return render(request, 'djangoapp/index.html', {'error_message': error_message})
+        
 
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
-# ...
+def logout_request(request):
+    if request.method == 'POST':
+        logout(request)
+        # Redirect to the desired page after logging out
+        return redirect('..')  # Assuming 'home' is the name of your home page URL pattern
+    # Handle other cases (GET request or invalid POST request)
+    return redirect('..')  # Redirect to home page in other cases as well
 
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
