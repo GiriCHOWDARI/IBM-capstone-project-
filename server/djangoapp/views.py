@@ -28,7 +28,14 @@ def contact(request):
     context = {}
     if request.method == 'GET':
         return render(request, 'djangoapp/contact.html', context)
-    
+
+# Create a `signup` view to return a static signup page
+#def contact(request):
+def sign_up(request):
+    context = {}
+    if request.method == 'GET':
+        return render(request, 'djangoapp/signup.html', context)
+
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
 def login_request(request):
@@ -67,7 +74,34 @@ def logout_request(request):
 
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
-# ...
+def register_request(request):
+    context = {}
+
+    if request.method == 'GET':
+        return render(request, 'djangoapp/index.html', context)
+
+    if request.method == 'POST':
+        print("This was a post request!")
+        username = request.POST['username']
+        password = request.POST['password']
+        first_name = request.POST['firstname']
+        last_name = request.POST['lastname']
+        
+        existing_user = User.objects.filter(username=username).first()
+
+        if existing_user:
+            print("User already exists, trying again!")
+            messages.error(request, 'User already exists. Please try again.')
+            return redirect('../signup')
+        else:
+            print("New user, registering...")
+            user = User.objects.create_user(username=username, password=password, first_name=first_name, last_name=last_name)
+            login(request, user)
+            return redirect('..')
+
+    print("If successful registration of a new user, this shouldn't happen...")
+    return render(request, "djangoapp/index.html", context)
+
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):

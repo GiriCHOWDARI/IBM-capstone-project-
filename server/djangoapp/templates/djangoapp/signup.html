@@ -11,11 +11,68 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
     <style>
+        h3 {
+            text-align: center;
+        }
+        
+        p {
+            text-align: center;
+            font-style: italic;
+        }
         .container {
-            margin: 0 auto;
-            padding: 20px;
-            border-left: 2px solid #000; /* Vertical line on the left */
-            border-right: 2px solid #000; /* Vertical line on the right */
+            padding-top: 10%;
+            padding-bottom: 10%;
+            background-color: #62676c; /* Light background color */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0px 0px 20px 0px rgb(15, 15, 15, 0.5); /* Box shadow for depth */
+            max-width: 400px;
+        }
+
+        /* Styles for form elements inside the container */
+        .container input[type="text"],
+        .container input[type="password"] {
+            width: 50%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .container button {
+            width: 50%;
+            padding: 12px;
+            background-color: #262c32; /* Bootstrap primary color */
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .container button:hover {
+            background-color: #71abe9; /* Darker shade on hover */
+        }
+
+        /* Additional styles for form labels if needed */
+        .container label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Center the form within the container */
+        .container form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container::after {
+            content: "";
+            display: table;
+            clear: both;
         }
 
         .additional-box {
@@ -47,6 +104,10 @@
             background-color: cadetblue;
         }
 
+        .background {
+            background-image: url("https://cdn.pixabay.com/photo/2016/05/06/16/32/car-1376190_1280.jpg");
+            background-size: cover;
+        }
     </style>
 
     <head>
@@ -57,8 +118,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     
-    
-    <body class="bg-secondary">
+    <body class="background">
         <div class="bg-dark">
             <h1 class="text-white-50 bg-dark p-3">Best Car Dealership</h1>
         <!-- Add a nav bar here -->
@@ -66,13 +126,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item active">
-                            <a class="nav-link text-white" href="">Home<span class="sr-only">(current)</span></a>
+                            <a class="nav-link text-white" href="..">Home<span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50" href="about/">About</a>
+                            <a class="nav-link text-white-50" href="../about/">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white-50" href="contact/">Contact</a>
+                            <a class="nav-link text-white-50" href="../contact/">Contact</a>
                         </li>
                         <!-- Add more navigation items as needed -->
                     </ul>
@@ -94,15 +154,28 @@
                         <input class="input-group-sm" placeholder="password" type="password" name="password">
                         <button type="submit" class="btn-outline-secondary">Login</button>
                     </form>
-                    <a class="btn-outline-dark" href="signup/">Sign Up</a>
+                    <p class="btn-outline-dark">Sign up</p>
                 </div>
                 <!-- {% endif %} -->
             </nav>
         </div>
-        <!-- Add a dealer table here -->
-        <!-- Your table content goes here -->
-    
-        <!-- Bootstrap JS and Popper.js (required for Bootstrap's JavaScript plugins) -->
+        <div class="container">
+            <h3>Welcome!</h3>
+            <p>Please fill this form to get unlimited access to our site.</p>
+            <form method="post" action="{% url 'djangoapp:register' %}" class="form-check-inline">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="username"><br>
+                <input type="text" name="firstname" placeholder="first name"><br>
+                <input type="text" name="lastname" placeholder="last name"><br>
+                <input type="password" name="password" placeholder="*********"><br>
+                <button type="submit">sign up</button>
+            </form>
+            {% if messages %}
+                    {% for message in messages %}
+                        <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                    {% endfor %}
+            {% endif %}
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>
     
