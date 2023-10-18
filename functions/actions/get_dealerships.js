@@ -1,21 +1,35 @@
-async function main(params) {
-    const cloudant = Cloudant({
-        url: params.COUCH_URL,
-        plugins: { iamauth: { iamApiKey: params.IAM_API_KEY } }
+/**
+ * Get all dealerships
+ */
+
+const { CloudantV1 } = require('@ibm-cloud/cloudant');
+const { IamAuthenticator } = require('ibm-cloud-sdk-core');
+
+const COUCH_URL = "https://f0d99e05-c0be-4951-abcd-dd4b0bfd945e-bluemix.cloudantnosqldb.appdomain.cloud";
+const IAM_API_KEY = "QSbAPGRyYI0GLy7YLOa4sno-BRcdoJB1Qh6Di9Ogq897";
+
+function main() {
+    const authenticator = new IamAuthenticator({ apikey: IAM_API_KEY });
+    const cloudant = CloudantV1.newInstance({
+        authenticator: authenticator
     });
+    
+    cloudant.setServiceUrl(COUCH_URL);
 
-    try {
-        // Access the "dealerships" database
-        const dealershipDB = cloudant.use('dealerships');
+    let dealerships = getAllRecords(cloudant, 'dealerships');
+    
+    return dealerships;
+}
 
-        // Retrieve all documents from the "dealerships" database
-        let allDocs = await dealershipDB.list({ include_docs: true }); // include_docs:true fetches the documents
-
-        // Extract the documents from the response
-        const dealerships = allDocs.rows.map(row => row.doc);
-
-        return { "dealerships": dealerships };
-    } catch (error) {
-        return { error: error.description };
-    }
+function getAllRecords(cloudant, dbname) {
+    return new Promise((resolve, reject) => {
+        cloudant.postAllDocs({ db: dbname, includeDocs: true, limit: 10 })
+            .then((result) => {
+                resolve({ result: result.result.rows });
+            })
+            .catch(err => {
+                console.error(err);
+                reject({ err: err });
+            });
+    });
 }

@@ -1,0 +1,31 @@
+from flask import Flask
+from flask_cors import CORS
+import json
+
+app = Flask("List of Universities")
+CORS(app)
+
+with open("reviews.json", "r") as reviewfile:
+    data = json.load(reviewfile)
+
+
+@app.route("/review")
+def getReviews():
+    reviews = []
+    for review in data["reviews"]:
+        reviews.append(review)
+    return json.dumps({"reviews": reviews},indent=4)
+
+
+@app.route("/review/<dealer>")
+def getReviewsListByDealer(dealer):
+    reviews = []
+    for review in data['reviews']:
+        if review["dealership"] == int(dealer):
+            reviews.append(review)
+    return json.dumps({"reviews": reviews},indent=4)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
