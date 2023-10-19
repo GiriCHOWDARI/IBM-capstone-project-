@@ -3,7 +3,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
+from .models import CarDealer, CarMake, CarModel
 # from .restapis import related methods
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -15,7 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 # Create your views here.
+def home(request):
+    context = {}
 
+    if request.method == 'GET':
+        return render(request, 'djangoapp/index.html', context)
 # Create an `about` view to render a static about page
 def about(request):
     context = {}
@@ -105,16 +111,53 @@ def register_request(request):
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-    context = {}
     if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
+        url = "http://localhost:3300/dealerships"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(dealer_names)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        url = f"http://localhost:5000/review/{dealer_id}"
+
+        reviews = get_dealer_reviews_from_cf(url)
+
+        context = ' '.join([str(review.review) + f"sentiment: {review.sentiment}" for review in reviews])
+
+        return HttpResponse(context)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+
+    url = f"http://localhost:5000/review"
+
+    if (not User.is_authenticated):
+        return render(request, "signup.html", {})
+    
+    json_payload = {}
+
+    json_payload['id'] = 1 + request.POST['review'].index('e')
+    json_payload['name'] = dealer_id
+    json_payload['review'] = request.POST['review']
+    json_payload['purchase'] = request.POST['purchase']
+    if request.POST['purchase']:
+        json_payload['purchase_date'] = datetime.utcnow().isoformat()
+        json_payload['car_make'] = request.POST['car_make']
+        json_payload['car_model'] = request.POST['car_model']
+        json_payload['car_year'] = request.POST['car_year']
+    
+    result = post_request(url, json_payload)
+
+    return result
+
+    
+
 
