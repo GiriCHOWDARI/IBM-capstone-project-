@@ -5,8 +5,8 @@
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
 
-const COUCH_URL = "https://f0d99e05-c0be-4951-abcd-dd4b0bfd945e-bluemix.cloudantnosqldb.appdomain.cloud";
-const IAM_API_KEY = "QSbAPGRyYI0GLy7YLOa4sno-BRcdoJB1Qh6Di9Ogq897";
+const COUCH_URL = "";
+const IAM_API_KEY = "";
 
 function main() {
     const authenticator = new IamAuthenticator({ apikey: IAM_API_KEY });

@@ -25,7 +25,7 @@ def get_request(url, **kwargs):
         print("Network exception occurred")
     return 0
 
-def auth_get_request(url, params, api_key="GNCaCJCVyEJq3U2M57LOA6Q2i7bk0RXExo3qU_vvDmlj"):
+def auth_get_request(url, params, api_key=""):
     print(params)
     print("GET from {} ".format(url))
     try:
@@ -84,12 +84,12 @@ def get_dealers_from_cf(url, **kwargs):
 def get_dealer_by_id(url, dealerId):
     new_url = url + f"?dealerId={dealerId}"
 
-    return get_dealers_from_cf(url)
+    return get_dealers_from_cf(new_url)
 
 def get_dealer_by_state(url, state):
     new_url = url + f"?state={state}"
 
-    return get_dealers_from_cf(url)
+    return get_dealers_from_cf(new_url)
     
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
@@ -118,8 +118,14 @@ def get_dealer_reviews_from_cf(url):
                             "nan",
                             review_doc["id"]
                         )
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review[0])
+            review_obj.review = review_obj.review[0]
+            review_obj.name = review_obj.name[0]
+            review_obj.car_model = review_obj.car_model[0]
+            review_obj.car_make = review_obj.car_make[0]
+            review_obj.purchase_date = review_obj.purchase_date[0]  
             results.append(review_obj)
+
     return results  
 # def get_dealer_by_id_from_cf(url, dealerId):
 # - Call get_request() with specified arguments
@@ -132,16 +138,33 @@ def get_dealer_reviews_from_cf(url):
 # - Get the returned sentiment label such as Positive or Negative
 def analyze_review_sentiments(dealerreview):
 
-    url = "https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/c147d392-b632-4536-ba39-9719dd1994aa"
+    url = "https://sentiment-analysis9.p.rapidapi.com/sentiment"
 
-    params = dict()
-    params["text"] = dealerreview
-    params["version"] = "2023-17-10"
-    params["features"] = ["sentiment"]
-    params["return_analyzed_text"] = True
+    payload = [
+        {
+            "id": "1",
+            "language": "en",
+            "text": dealerreview
+        }
+    ]
+    headers = {
+        "content-type": "application/json",
+        "Accept": "application/json",
+        "X-RapidAPI-Key": "",
+        "X-RapidAPI-Host": ""
+    }
 
-    json_result = auth_get_request(url, params, "{GNCaCJCVyEJq3U2M57LOA6Q2i7bk0RXExo3qU_vvDmlj}")
+    response = requests.post(url, json=payload, headers=headers)
+    print(f"Analyzing: {dealerreview}")
+    sentiment = response.json()[0]['predictions'][0]['prediction']
 
-    return "positive"
+    return sentiment
+
+def get_review_id():
+    url = "http://localhost:5000/review/final"
+
+    final_index = get_request(url)
+
+    return final_index + 1
 
 

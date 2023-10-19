@@ -100,6 +100,28 @@
             </nav>
         </div>
         <!-- Add a dealer table here -->
+        <table class="table" id="table">
+            <thead>
+                <tr scope="row">
+                    <th data-field="id">ID</th>
+                    <th data-field="text">Name</th>
+                    <th data-field="text">State</th>
+                    <th data-field="text">City</th>
+                    <th data-field="text">Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dealer in dealerships %}
+                    <tr>
+                        <td class="table-cell">{{dealer.id}}</td>
+                        <td class="table-cell"><a href="dealer/{{dealer.id}}">{{dealer.full_name}}</a></td>
+                        <td class="table-cell">{{dealer.st}}</td>
+                        <td class="table-cell">{{dealer.city}}</td>
+                        <td class="table-cell">{{dealer.address}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <!-- Your table content goes here -->
     
         <!-- Bootstrap JS and Popper.js (required for Bootstrap's JavaScript plugins) -->

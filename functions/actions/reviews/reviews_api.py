@@ -8,6 +8,12 @@ CORS(app)
 with open("reviews.json", "r") as reviewfile:
     data = json.load(reviewfile)
 
+@app.route("/review/final")
+def getFinalIndex():
+    reviews = []
+    for review in data["reviews"]:
+        reviews.append(review)
+    return reviews[-1].id
 
 @app.route("/review")
 def getReviews():
